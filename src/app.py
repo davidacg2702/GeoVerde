@@ -70,6 +70,23 @@ st.set_page_config(page_title="GeoVerde – Fenología de Floración", layout="w
 st.title("GeoVerde – Explorador de la Fenología de la Floración")
 st.caption("NASA Space Apps – Monitoreo y visualización de eventos de floración con datos de observación de la Tierra")
 
+# --- Scroll horizontal para la barra de pestañas (móvil/mediano) ---
+st.markdown("""
+<style>
+/* Hace que la barra de tabs permita desplazamiento horizontal */
+.stTabs [role="tablist"]{
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+}
+.stTabs [role="tab"]{
+    flex: 0 0 auto !important;  /* evita que se achiquen y se amontonen */
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 with st.sidebar:
     st.header("Parámetros")
     start_in = st.text_input("Fecha inicio", "2024-01-01")
