@@ -124,7 +124,59 @@ with st.sidebar:
     )
     wc_codes = [k for k, v in worldcover_labels.items() if v in wc_sel]
 
-    uploaded = st.file_uploader("Sube tu AOI .geojson (opcional)", type=["geojson", "json"])
+    st.markdown("### Selección del área de interés (AOI)")
+
+aoi_option = st.radio(
+    "Selecciona cómo definir tu AOI:",
+    ["Ejemplo (Tambogrande, Piura)", "Subir archivo GeoJSON", "Ingresar coordenadas manualmente"]
+)
+
+if aoi_option == "Ejemplo (Tambogrande, Piura)":
+    # AOI de demostración (Tambogrande, Piura, Perú)
+    geojson_obj = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "properties": {"name": "Tambogrande"},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [-80.516, -5.016],
+                    [-80.316, -5.016],
+                    [-80.316, -4.866],
+                    [-80.516, -4.866],
+                    [-80.516, -5.016]
+                ]]
+            }
+        }]
+    }
+
+elif aoi_option == "Subir archivo GeoJSON":
+    uploaded = st.file_uploader("Sube tu AOI .geojson o .json", type=["geojson", "json"])
+    if uploaded:
+        geojson_obj = json.load(uploaded)
+    else:
+        st.stop()
+
+elif aoi_option == "Ingresar coordenadas manualmente":
+    coords_text = st.text_area(
+        "Pega tus coordenadas (formato JSON o lista [[lon,lat], [lon,lat], ...]):",
+        "[[-80.5, -5.0], [-80.3, -5.0], [-80.3, -4.9], [-80.5, -4.9], [-80.5, -5.0]]"
+    )
+    try:
+        coords = json.loads(coords_text)
+        geojson_obj = {
+            "type": "FeatureCollection",
+            "features": [{
+                "type": "Feature",
+                "properties": {"name": "AOI manual"},
+                "geometry": {"type": "Polygon", "coordinates": [coords]}
+            }]
+        }
+    except Exception as e:
+        st.error(f"Error al procesar coordenadas: {e}")
+        st.stop()
+
     st.caption("Si no subes AOI, se usa un polígono de ejemplo en Tambogrande-Piura, Perú.")
 
 # Fechas seguras
