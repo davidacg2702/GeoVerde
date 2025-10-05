@@ -142,7 +142,7 @@ default_geojson = {
   "type": "FeatureCollection",
   "features": [{
       "type": "Feature",
-      "properties": {"name": "Piura AOI demo"},
+      "properties": {"name": "Tambogrande AOI demo"},
       "geometry": {"type": "Polygon", "coordinates": [[
           [-80.45, -4.98], [-80.28, -4.98], [-80.28, -4.85], [-80.45, -4.85], [-80.45, -4.98]
       ]]}
