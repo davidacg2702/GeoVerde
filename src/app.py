@@ -124,7 +124,7 @@ with st.sidebar:
     )
     wc_codes = [k for k, v in worldcover_labels.items() if v in wc_sel]
 
-    st.markdown("### Selección del área de interés (AOI)")
+st.markdown("### Selección del área de interés (AOI)")
 
 aoi_option = st.radio(
     "Selecciona cómo definir tu AOI:",
@@ -141,11 +141,11 @@ if aoi_option == "Ejemplo (Tambogrande, Piura)":
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [[
-                    [-80.516, -5.016],
-                    [-80.316, -5.016],
-                    [-80.316, -4.866],
-                    [-80.516, -4.866],
-                    [-80.516, -5.016]
+                    [-80.45, -4.98],
+                    [-80.28, -4.98],
+                    [-80.28, -4.85],
+                    [-80.45, -4.85],
+                    [-80.45, -4.98]
                 ]]
             }
         }]
@@ -161,7 +161,7 @@ elif aoi_option == "Subir archivo GeoJSON":
 elif aoi_option == "Ingresar coordenadas manualmente":
     coords_text = st.text_area(
         "Pega tus coordenadas (formato JSON o lista [[lon,lat], [lon,lat], ...]):",
-        "[[-80.5, -5.0], [-80.3, -5.0], [-80.3, -4.9], [-80.5, -4.9], [-80.5, -5.0]]"
+        "[[-80.45, -4.98], [-80.28, -4.98], [-80.28, -4.85], [-80.45, -4.85], [-80.45, -4.98]]"
     )
     try:
         coords = json.loads(coords_text)
