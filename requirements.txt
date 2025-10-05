@@ -8,4 +8,4 @@ folium>=0.17.0
 streamlit-folium>=0.21.0
 plotly>=5.22
 kaleido>=0.2.1
-
+google-auth>=2.33.0
