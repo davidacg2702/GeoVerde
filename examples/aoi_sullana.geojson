@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "name": "Sullana (banano)" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-80.75, -4.94], [-80.62, -4.94],
+          [-80.62, -4.83], [-80.75, -4.83],
+          [-80.75, -4.94]
+        ]]
+      }
+    }
+  ]
+}

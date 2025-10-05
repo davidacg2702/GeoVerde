@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "name": "Tambogrande (mango)" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-80.45, -4.98], [-80.28, -4.98],
+          [-80.28, -4.85], [-80.45, -4.85],
+          [-80.45, -4.98]
+        ]]
+      }
+    }
+  ]
+}

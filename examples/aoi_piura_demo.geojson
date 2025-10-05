@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "name": "Piura AOI demo" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-80.90, -5.30], [-80.40, -5.30],
+          [-80.40, -5.00], [-80.90, -5.00],
+          [-80.90, -5.30]
+        ]]
+      }
+    }
+  ]
+}
