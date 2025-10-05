@@ -136,7 +136,7 @@ geojson_obj = json.load(uploaded) if uploaded else default_geojson
 # GEE
 EE_OK = True
 try:
-    mode = init_ee(debug=True)
+    mode = init_ee(debug=False)
     st.caption(f"Earth Engine inicializado (modo: {mode})")
 except Exception as e:
     EE_OK = False
