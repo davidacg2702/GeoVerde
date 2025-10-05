@@ -200,7 +200,7 @@ default_geojson = {
       ]]}
   }]
 }
-geojson_obj = json.load(uploaded) if uploaded else default_geojson
+
 
 # GEE
 EE_OK = True
