@@ -125,7 +125,7 @@ with st.sidebar:
     wc_codes = [k for k, v in worldcover_labels.items() if v in wc_sel]
 
     uploaded = st.file_uploader("Sube tu AOI .geojson (opcional)", type=["geojson", "json"])
-    st.caption("Si no subes AOI, se usa un polígono de ejemplo en Piura, Perú.")
+    st.caption("Si no subes AOI, se usa un polígono de ejemplo en Tambogrande-Piura, Perú.")
 
 # Fechas seguras
 try:
@@ -144,7 +144,7 @@ default_geojson = {
       "type": "Feature",
       "properties": {"name": "Piura AOI demo"},
       "geometry": {"type": "Polygon", "coordinates": [[
-          [-80.90, -5.30], [-80.40, -5.30], [-80.40, -5.00], [-80.90, -5.00], [-80.90, -5.30]
+          [-80.45, -4.98], [-80.28, -4.98], [-80.28, -4.85], [-80.45, -4.85], [-80.45, -4.98]
       ]]}
   }]
 }
