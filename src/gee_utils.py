@@ -15,16 +15,17 @@ L8_SR = "LANDSAT/LC08/C02/T1_L2"
 L9_SR = "LANDSAT/LC09/C02/T1_L2"
 
 # ---------------------------------------------------------------------
+
 def init_ee(debug: bool = False) -> str:
     """
-    Inicializa Google Earth Engine.
-    - En Streamlit Cloud: usa Service Account de st.secrets (EE_SERVICE_ACCOUNT, EE_PRIVATE_KEY_JSON).
-    - En local: intenta credenciales existentes; si fallan, permite ee.Authenticate().
+    Inicializa Earth Engine.
+    - En Streamlit Cloud: usa Service Account desde st.secrets (EE_SERVICE_ACCOUNT, EE_PRIVATE_KEY_JSON).
+    - En local: usa credenciales existentes; si fallan, permite ee.Authenticate().
     Devuelve 'service' (SA) o 'local' (OAuth/local).
     """
     project = os.getenv("EARTHENGINE_PROJECT") or "jovial-sunrise-393204"
 
-    # Intentar leer secretos (si estamos dentro de Streamlit)
+    # Intentar leer secrets (si estamos dentro de Streamlit)
     sa = None
     key_json = None
     in_streamlit = False
@@ -34,20 +35,31 @@ def init_ee(debug: bool = False) -> str:
         project  = st.secrets.get("EARTHENGINE_PROJECT", project)
         sa       = st.secrets.get("EE_SERVICE_ACCOUNT", None)
         key_json = st.secrets.get("EE_PRIVATE_KEY_JSON", None)
+        if debug:
+            st.caption(f"Secrets detectados: EE_SERVICE_ACCOUNT={'sí' if sa else 'no'} · KEY={'sí' if bool(key_json) else 'no'} · PROJECT={project}")
     except Exception:
-        # Modo CLI/local: también permitimos variables de entorno
+        # CLI/local: también variables de entorno
         sa       = os.getenv("EE_SERVICE_ACCOUNT")
         key_json = os.getenv("EE_PRIVATE_KEY_JSON")
 
-    # 1) Si hay Service Account + key -> usar SIEMPRE esto (modo nube)
+    # 1) Service Account disponible -> usar SIEMPRE esto (modo nube)
     if sa and key_json:
-        if isinstance(key_json, dict):
-            key_data = json.dumps(key_json)
-        else:
-            key_data = key_json
-        creds = ee.ServiceAccountCredentials(sa, key_data=key_data)
-        ee.Initialize(credentials=creds, project=project)
-        return "service"
+        try:
+            # Acepta JSON dict o string
+            info = json.loads(key_json) if isinstance(key_json, str) else key_json
+
+            # Credenciales robustas con google.oauth2
+            from google.oauth2 import service_account
+            scopes = [
+                "https://www.googleapis.com/auth/earthengine",
+                "https://www.googleapis.com/auth/cloud-platform",
+            ]
+            creds = service_account.Credentials.from_service_account_info(info, scopes=scopes)
+            ee.Initialize(credentials=creds, project=project)
+            return "service"
+        except Exception as e:
+            # Si algo falla aquí, no intentes OAuth en la nube
+            raise RuntimeError(f"Fallo inicializando con Service Account: {e}")
 
     # 2) Sin SA: intentar credenciales locales (útil en tu PC)
     try:
