@@ -1,5 +1,5 @@
 # gee_utils.py
-import os
+import os, json
 import ee
 
 # --- Colecciones ---
@@ -15,14 +15,55 @@ L8_SR = "LANDSAT/LC08/C02/T1_L2"
 L9_SR = "LANDSAT/LC09/C02/T1_L2"
 
 # ---------------------------------------------------------------------
-def init_ee():
-    """Inicializa GEE (usa variable de entorno si existe)."""
+def init_ee(debug: bool = False) -> str:
+    """
+    Inicializa Google Earth Engine.
+    - En Streamlit Cloud: usa Service Account de st.secrets (EE_SERVICE_ACCOUNT, EE_PRIVATE_KEY_JSON).
+    - En local: intenta credenciales existentes; si fallan, permite ee.Authenticate().
+    Devuelve 'service' (SA) o 'local' (OAuth/local).
+    """
     project = os.getenv("EARTHENGINE_PROJECT") or "jovial-sunrise-393204"
+
+    # Intentar leer secretos (si estamos dentro de Streamlit)
+    sa = None
+    key_json = None
+    in_streamlit = False
     try:
-        ee.Initialize(project=project)
+        import streamlit as st  # import diferido
+        in_streamlit = True
+        project  = st.secrets.get("EARTHENGINE_PROJECT", project)
+        sa       = st.secrets.get("EE_SERVICE_ACCOUNT", None)
+        key_json = st.secrets.get("EE_PRIVATE_KEY_JSON", None)
     except Exception:
+        # Modo CLI/local: también permitimos variables de entorno
+        sa       = os.getenv("EE_SERVICE_ACCOUNT")
+        key_json = os.getenv("EE_PRIVATE_KEY_JSON")
+
+    # 1) Si hay Service Account + key -> usar SIEMPRE esto (modo nube)
+    if sa and key_json:
+        if isinstance(key_json, dict):
+            key_data = json.dumps(key_json)
+        else:
+            key_data = key_json
+        creds = ee.ServiceAccountCredentials(sa, key_data=key_data)
+        ee.Initialize(credentials=creds, project=project)
+        return "service"
+
+    # 2) Sin SA: intentar credenciales locales (útil en tu PC)
+    try:
+        ee.Initialize(project=project)  # tokens guardados localmente
+        return "local"
+    except Exception:
+        # En la nube NO hay gcloud → no intentes OAuth
+        if in_streamlit:
+            raise RuntimeError(
+                "Streamlit Cloud sin Service Account. "
+                "Agrega EE_SERVICE_ACCOUNT y EE_PRIVATE_KEY_JSON en Settings → Secrets."
+            )
+        # En local sí permitimos OAuth una vez
         ee.Authenticate()
         ee.Initialize(project=project)
+        return "local"
 
 # --------------------------- Sentinel-2 --------------------------------
 def _s2_mask(img):
