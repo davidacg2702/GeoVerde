@@ -136,10 +136,12 @@ geojson_obj = json.load(uploaded) if uploaded else default_geojson
 # GEE
 EE_OK = True
 try:
-    init_ee()
+    mode = init_ee(debug=True)
+    st.caption(f"Earth Engine inicializado (modo: {mode})")
 except Exception as e:
     EE_OK = False
     st.error(f"No se pudo inicializar Google Earth Engine: {e}")
+
 
 # --------------------------- Mapa --------------------------------------
 st.subheader("Mapa – Contexto fenológico (NDVI mediana)")
